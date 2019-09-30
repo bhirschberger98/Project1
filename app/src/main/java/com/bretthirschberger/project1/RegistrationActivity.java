@@ -2,21 +2,20 @@ package com.bretthirschberger.project1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -28,7 +27,6 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText mPasswordField;
     private EditText mConfirmPasswordField;
     private Button mRegisterButton;
-//    private boolean isValidDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +135,6 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void checkValidEntry() {
-        Log.i("Valid", "-------------");
-        Log.i("Valid length", (mFirstNameField.getText().toString().length() >= 3) + "");
-        Log.i("Valid length", (mFirstNameField.getText().toString().length() < 30) + "");
-        Log.i("Not empty", !mPasswordField.getText().toString().equals("") + "");
-        Log.i("Is same", mPasswordField.getText().toString().equals(mConfirmPasswordField.getText().toString()) + "");
-        Log.i("Last Name Empty",mLastNameField.getText().toString().equals("")+"");
-        Log.i("Valid Date", isValidDate() + "");
-        Log.i("Valid Email", isValidEmail() + "");
         if (mFirstNameField.getText().toString().trim().length() >= 3 &&
                 mFirstNameField.getText().toString().trim().length() < 30 &&
                 !mLastNameField.getText().toString().trim().equals("") &&
@@ -164,25 +154,25 @@ public class RegistrationActivity extends AppCompatActivity {
             new SimpleDateFormat("MM/dd/yyyy").parse(mDOBField.getText().toString().trim());
             return true;
         } catch (ParseException e) {
-//            isValidDate = false;
+
         }
         try {
             new SimpleDateFormat("MM-dd-yyyy").parse(mDOBField.getText().toString().trim());
             return true;
         } catch (ParseException e) {
-//            isValidDate = false;
+
         }
         try {
             new SimpleDateFormat("MM/dd/yy").parse(mDOBField.getText().toString().trim());
             return true;
         } catch (ParseException e) {
-//            isValidDate = false;
+
         }
         try {
             new SimpleDateFormat("MM-dd-yy").parse(mDOBField.getText().toString().trim());
             return true;
         } catch (ParseException e) {
-//            isValidDate = false;
+
         }
         return false;
     }
@@ -206,12 +196,20 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
-        String email=mEmailField.getText().toString().trim();
-        String name = mFirstNameField.getText().toString().trim()+" "+mLastNameField.getText().toString().trim();
+        String email = mEmailField.getText().toString().trim();
+        String name = mFirstNameField.getText().toString().trim() + " " + mLastNameField.getText().toString().trim();
         String dob = mDOBField.getText().toString().trim();
-        String password=mPasswordField.getText().toString();
-        SQLiteDatabase users = this.openOrCreateDatabase("Users", MODE_PRIVATE, null);
-        users.execSQL("CREATE TABLE IF NOT EXISTS users (email EMAIL PRIMARY KEY,name VARCHAR not null, dob DATE not null,password varchar not null)");
-        users.execSQL("INSERT  INTO users(email, name,dob,password) VALUES('"+email+"','"+name+"','"+dob+"','"+password+"')");
+        String password = mPasswordField.getText().toString();
+
+        File users = new File(getFilesDir().getAbsolutePath() + "/users.txt");
+
+        try (FileWriter writer = new FileWriter(users,true)) {
+            writer.write(email + "," + name + "," + dob + "," + password + "\n");
+            startActivity(new Intent(this,MainActivity.class));
+            Toast.makeText(getApplicationContext(),getResources().getString(R.string.account_created),Toast.LENGTH_SHORT).show();;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
