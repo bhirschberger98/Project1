@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -26,6 +27,10 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText mEmailField;
     private EditText mPasswordField;
     private EditText mConfirmPasswordField;
+    private TextView mNameError;
+    private TextView mPasswordError;
+    private TextView mEmailError;
+    private TextView mDOBError;
     private Button mRegisterButton;
 
     @Override
@@ -40,7 +45,10 @@ public class RegistrationActivity extends AppCompatActivity {
         mPasswordField = findViewById(R.id.password_field_2);
         mConfirmPasswordField = findViewById(R.id.confirm_password_field);
         mRegisterButton = findViewById(R.id.register_button);
-
+        mNameError = findViewById(R.id.name_err);
+        mPasswordError=findViewById(R.id.password_err);
+        mEmailError=findViewById(R.id.email_err);
+        mDOBError=findViewById(R.id.dob_err);
 
         mFirstNameField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -53,12 +61,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (mFirstNameField.getText().toString().trim().length() < 3) {
-                    Toast.makeText(getApplicationContext(), "Name Must be at least 3 chars", Toast.LENGTH_SHORT).show();
-                }
-                if (mFirstNameField.getText().toString().trim().length() > 30) {
-                    Toast.makeText(getApplicationContext(), "Name Must be less than 30 chars", Toast.LENGTH_SHORT).show();
-                }
+                checkName();
                 checkValidEntry();
             }
         });
@@ -87,6 +90,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                checkDate();
                 checkValidEntry();
             }
         });
@@ -101,6 +105,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                checkEmail();
                 checkValidEntry();
             }
         });
@@ -115,6 +120,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                checkPassword();
                 checkValidEntry();
             }
         });
@@ -129,12 +135,46 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                checkPassword();
                 checkValidEntry();
             }
         });
     }
 
+    public void checkName(){
+        if(mFirstNameField.getText().toString().trim().length() >= 3 ){
+            mNameError.setText(R.string.name_short);
+        }else if( mFirstNameField.getText().toString().trim().length() < 30){
+            mNameError.setText(R.string.name_long);
+        }else{
+            mNameError.setText("");
+        }
+    }
+    public void checkDate(){
+        if(!isValidDate()){
+            mDOBError.setText(R.string.invalid_date);
+        }else{
+            mDOBError.setText("");
+        }
+    }
+
+    public void checkPassword(){
+        if(!mPasswordField.getText().toString().equals(mConfirmPasswordField.getText().toString())){
+            mPasswordError.setText(R.string.password_match);
+        }else {
+            mPasswordError.setText("");
+        }
+    }
+    public void checkEmail(){
+        if(!isValidEmail()){
+            mEmailError.setText(R.string.invalid_email);
+        } else{
+            mEmailError.setText("");
+        }
+    }
+
     public void checkValidEntry() {
+
         if (mFirstNameField.getText().toString().trim().length() >= 3 &&
                 mFirstNameField.getText().toString().trim().length() < 30 &&
                 !mLastNameField.getText().toString().trim().equals("") &&
