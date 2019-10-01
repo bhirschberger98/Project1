@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEmailField;
     private EditText mPasswordField;
 
-    private static int SPLASH_TIME_OUT=2000;
+    private static int SPLASH_TIME_OUT = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,19 @@ public class MainActivity extends AppCompatActivity {
 
         mEmailField = findViewById(R.id.email_field_1);
         mPasswordField = findViewById(R.id.password_field_1);
+
+        //restores
+        if (savedInstanceState != null) {
+            mEmailField.setText(savedInstanceState.getString("email","ERROR"));
+            mPasswordField.setText(savedInstanceState.getString("password","ERROR"));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("email", mEmailField.getText().toString());
+        outState.putString("password", mPasswordField.getText().toString());
     }
 
     public void login(View view) {

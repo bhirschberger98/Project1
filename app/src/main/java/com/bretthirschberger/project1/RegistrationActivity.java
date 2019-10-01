@@ -38,6 +38,7 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+
         mFirstNameField = findViewById(R.id.first_name_field);
         mLastNameField = findViewById(R.id.last_name_field);
         mDOBField = findViewById(R.id.dob_field);
@@ -46,10 +47,17 @@ public class RegistrationActivity extends AppCompatActivity {
         mConfirmPasswordField = findViewById(R.id.confirm_password_field);
         mRegisterButton = findViewById(R.id.register_button);
         mNameError = findViewById(R.id.name_err);
-        mPasswordError=findViewById(R.id.password_err);
-        mEmailError=findViewById(R.id.email_err);
-        mDOBError=findViewById(R.id.dob_err);
-
+        mPasswordError = findViewById(R.id.password_err);
+        mEmailError = findViewById(R.id.email_err);
+        mDOBError = findViewById(R.id.dob_err);
+        if (savedInstanceState != null) {
+            mFirstNameField.setText(savedInstanceState.getString("first name", "ERROR"));
+            mLastNameField.setText(savedInstanceState.getString("last name", "ERROR"));
+            mDOBField.setText(savedInstanceState.getString("dob", "ERROR"));
+            mEmailField.setText(savedInstanceState.getString("email", "ERROR"));
+            mPasswordField.setText(savedInstanceState.getString("password", "ERROR"));
+            mConfirmPasswordField.setText(savedInstanceState.getString("confirm password", "ERROR"));
+        }
         mFirstNameField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -141,34 +149,47 @@ public class RegistrationActivity extends AppCompatActivity {
         });
     }
 
-    public void checkName(){
-        if(mFirstNameField.getText().toString().trim().length() >= 3 ){
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("first name", mFirstNameField.getText().toString());
+        outState.putString("last name", mLastNameField.getText().toString());
+        outState.putString("dob", mDOBField.getText().toString());
+        outState.putString("email", mEmailField.getText().toString());
+        outState.putString("password", mPasswordField.getText().toString());
+        outState.putString("confirm password", mConfirmPasswordField.getText().toString());
+    }
+
+    public void checkName() {
+        if (mFirstNameField.getText().toString().trim().length() <= 3) {
             mNameError.setText(R.string.name_short);
-        }else if( mFirstNameField.getText().toString().trim().length() < 30){
+        } else if (mFirstNameField.getText().toString().trim().length() > 30) {
             mNameError.setText(R.string.name_long);
-        }else{
+        } else {
             mNameError.setText("");
         }
     }
-    public void checkDate(){
-        if(!isValidDate()){
+
+    public void checkDate() {
+        if (!isValidDate()) {
             mDOBError.setText(R.string.invalid_date);
-        }else{
+        } else {
             mDOBError.setText("");
         }
     }
 
-    public void checkPassword(){
-        if(!mPasswordField.getText().toString().equals(mConfirmPasswordField.getText().toString())){
+    public void checkPassword() {
+        if (!mPasswordField.getText().toString().equals(mConfirmPasswordField.getText().toString())) {
             mPasswordError.setText(R.string.password_match);
-        }else {
+        } else {
             mPasswordError.setText("");
         }
     }
-    public void checkEmail(){
-        if(!isValidEmail()){
+
+    public void checkEmail() {
+        if (!isValidEmail()) {
             mEmailError.setText(R.string.invalid_email);
-        } else{
+        } else {
             mEmailError.setText("");
         }
     }
@@ -243,10 +264,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
         File users = new File(getFilesDir().getAbsolutePath() + "/users.txt");
 
-        try (FileWriter writer = new FileWriter(users,true)) {
+        try (FileWriter writer = new FileWriter(users, true)) {
             writer.write(email + "," + name + "," + dob + "," + password + "\n");
-            startActivity(new Intent(this,MainActivity.class));
-            Toast.makeText(getApplicationContext(),getResources().getString(R.string.account_created),Toast.LENGTH_SHORT).show();;
+            startActivity(new Intent(this, MainActivity.class));
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.account_created), Toast.LENGTH_SHORT).show();
+            ;
         } catch (IOException e) {
             e.printStackTrace();
         }

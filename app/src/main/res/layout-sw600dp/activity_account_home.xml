@@ -18,16 +18,19 @@
         <TextView
             android:id="@+id/name_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/dob_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/email_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="36sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

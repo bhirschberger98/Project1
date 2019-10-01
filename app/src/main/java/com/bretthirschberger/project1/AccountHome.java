@@ -26,10 +26,11 @@ public class AccountHome extends AppCompatActivity {
         displayAccountInfo();
     }
 
+
+
     public void displayAccountInfo(){
         String email= getIntent().getStringExtra("email");
         try (Scanner reader = new Scanner(new File(getFilesDir().getAbsolutePath() + "/users.txt"))) {
-//            reader.
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
                 String[] userInfo = line.split(",");
